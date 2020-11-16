@@ -21,20 +21,19 @@ class TCPServer:
         while True:
             clientSock, clientAddr = self.sock.accept()
             print ("Connection received from ",  clientSock.getpeername())
-            self.checkIfMessageEmptyLine()
-            data = clientSock.recv(1024)
-            if not len(data):
-                print("hey I think you sent an empty thing")
-                break
             # Get the message and echo it back
             while True:
                 data = clientSock.recv(1024)
+                print(data)
                 if not len(data):
                     break
                 print ("Received message:  " + data.decode("ascii"))
-
-                clientSock.sendall(data)
+                with open("Content/links.txt") as links:
+                    response = links.read()
+                    response = response.encode("ascii")
+                clientSock.sendall(response)
             clientSock.close()
+
 
 def main():
     # Create a server
