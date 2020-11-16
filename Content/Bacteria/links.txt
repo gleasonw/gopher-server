@@ -1,0 +1,2 @@
+0Select Spriochetes	spirochetes.txt	localhost	50000
+0Select Proteobacteria	proteobacteria.txt	localhost	50000

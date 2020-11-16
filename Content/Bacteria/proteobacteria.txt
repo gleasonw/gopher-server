@@ -1,0 +1,6 @@
+candidatus liberibacter asiaticus
+sinorhizobium meliloti
+ralstonia solancearum
+wigglesworthia brevipalpis
+escherichia coli
+haemophilus influenzae

@@ -1,0 +1,2 @@
+0Select Animals	animals.txt	localhost	50000
+0Select Plants	plants.txt	localhost	50000

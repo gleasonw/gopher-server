@@ -1,7 +1,8 @@
 '''
-A simple TCP "echo" server written in Python.
+A gopher server, by Nicole Binder and Will Gleason.
 
-author:  Amy Csizmar Dalal and [YOUR NAMES HERE]
+Written using starter code by:
+Amy Csizmar Dalal
 CS 331, Fall 2020
 '''
 import sys, socket
@@ -20,6 +21,11 @@ class TCPServer:
         while True:
             clientSock, clientAddr = self.sock.accept()
             print ("Connection received from ",  clientSock.getpeername())
+            self.checkIfMessageEmptyLine()
+            data = clientSock.recv(1024)
+            if not len(data):
+                print("hey I think you sent an empty thing")
+                break
             # Get the message and echo it back
             while True:
                 data = clientSock.recv(1024)

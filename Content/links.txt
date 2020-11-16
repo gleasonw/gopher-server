@@ -1,0 +1,4 @@
+0About This Server	about.txt	localhost	50000
+0Select Arachaea	arachaea.txt	localhost	50000
+1Bacteria	Bacteria/	localhost	50000
+1Eurkaryota	Eukaryota/	localhost	50000
