@@ -24,15 +24,18 @@ class TCPServer:
             # Get the message and echo it back
             while True:
                 data = clientSock.recv(1024)
-                print(data)
                 if not len(data):
                     break
+                if data.decode("ascii") == "\\r\\n":
+                    with open("Content/links.txt") as links:
+                        response = links.read()
+                        response = response.encode("ascii")
+                else:
+                    response = b"Got it"
                 print ("Received message:  " + data.decode("ascii"))
-                with open("Content/links.txt") as links:
-                    response = links.read()
-                    response = response.encode("ascii")
                 clientSock.sendall(response)
             clientSock.close()
+
 
 
 def main():
