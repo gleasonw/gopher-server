@@ -5,7 +5,7 @@ Written using starter code by:
 Amy Csizmar Dalal
 CS 331, Fall 2020
 '''
-import sys, socket
+import sys, socket, os
 
 class TCPServer:
     def __init__(self, port=50000):
@@ -26,12 +26,38 @@ class TCPServer:
                 data = clientSock.recv(1024)
                 if not len(data):
                     break
+
                 if data.decode("ascii") == "\\r\\n":
                     with open("Content/links.txt") as links:
                         response = links.read()
                         response = response.encode("ascii")
+
                 else:
-                    response = b"Got it"
+                    selector = data.decode("ascii")
+                    selector = selector.replace("\\r\\n","")
+                    fileType = selector[len(selector) - 3:]
+
+                    #They're asking for a specific file
+                    if fileType in ["txt"]:
+                        try:
+                            with open(os.path.join("Content", selector)) as chosenFile:
+                                response = chosenFile.read()
+                                response = response.encode("ascii")
+                        except:
+                            response = "Error: couldn't find that file!"
+                            response = response.encode("ascii")
+
+                    #They're browsing a directory
+                    else:
+                        print(selector)
+                        try:
+                            with open(os.path.join("Content", selector, "links.txt")) as links:
+                                response = links.read()
+                                response = response.encode("ascii")
+                        except:
+                            response = "Error: couldn't find that file!"
+                            response = response.encode("ascii")
+
                 print ("Received message:  " + data.decode("ascii"))
                 clientSock.sendall(response)
             clientSock.close()
