@@ -21,44 +21,39 @@ class TCPServer:
         while True:
             clientSock, clientAddr = self.sock.accept()
             print ("Connection received from ",  clientSock.getpeername())
-            # Get the message and echo it back
             while True:
                 data = clientSock.recv(1024)
                 if not len(data):
                     break
 
+                #We get a CR LF message, list all we have
                 if data.decode("ascii") == "\\r\\n":
                     with open("Content/links.txt") as links:
                         response = links.read()
                         response = response.encode("ascii")
 
+                #Not a CR LF message, parse the selector
                 else:
                     selector = data.decode("ascii")
                     selector = selector.replace("\\r\\n","")
                     fileType = selector[len(selector) - 3:]
 
-                    #They're asking for a specific file
-                    if fileType in ["txt"]:
-                        try:
+                    try:
+                        #They're asking for a specific file
+                        if fileType in ["txt"]:
                             with open(os.path.join("Content", selector)) as chosenFile:
                                 response = chosenFile.read()
-                                response = response.encode("ascii")
-                        except:
-                            response = "Error: couldn't find that file!"
-                            response = response.encode("ascii")
 
-                    #They're browsing a directory
-                    else:
-                        print(selector)
-                        try:
+                        #They're browsing a directory
+                        else:
                             with open(os.path.join("Content", selector, "links.txt")) as links:
                                 response = links.read()
-                                response = response.encode("ascii")
-                        except:
-                            response = "Error: couldn't find that file!"
-                            response = response.encode("ascii")
+                    except:
+                        response = "Error: couldn't find that file or directory!"
 
                 print ("Received message:  " + data.decode("ascii"))
+                response = response + "\n."
+                response = response.encode("ascii")
                 clientSock.sendall(response)
             clientSock.close()
 
