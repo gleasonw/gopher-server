@@ -15,61 +15,59 @@ class TCPServer:
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
 
+    def checkIfCarriageReturn(self, clientSock, data):
+        #We get a CR LF message, list all we have
+        response = None
+        if data.decode("ascii") == "\\r\\n":
+            with open("Content/links.txt") as links:
+                response = links.read()
+        return response
+
+    def parseSelector(self, clientSock, data):
+        selector = data.decode("ascii")
+        #Remove the CR LF from the selector string, get the file type (if the client wants a file)
+        selector = selector.replace("\r\n","")
+        fileType = selector[len(selector) - 3:]
+        try:
+            #They're asking for a specific file
+            if fileType in ["txt"]:
+                with open(os.path.join("Content", selector)) as chosenFile:
+                    response = chosenFile.read()
+
+            #They're browsing a directory
+            else:
+                with open(os.path.join("Content", selector, "links.txt")) as links:
+                    response = links.read()
+        except:
+            response = "Error: couldn't find that file or directory!"
+        return response
+
+
     def listen(self):
         self.sock.listen(5)
-
-        while True:
-            clientSock, clientAddr = self.sock.accept()
-            clientSock.settimeout(3)
-
-            #Keeping these print statements in case they're handy for grading!
-            print ("Connection received from ",  clientSock.getpeername())
-            try:
-                while True:
-                    data = clientSock.recv(1024)
-                    if not len(data):
-                        break
-
-                    #We get a CR LF message, list all we have
-                    if data.decode("ascii") == "\r\n":
-                        with open("Content/links.txt") as links:
-                            response = links.read()
-
+        clientSock, clientAddr = self.sock.accept()
+        clientSock.settimeout(5)
+        try:
+            while True:
+                data = clientSock.recv(1024)
+                if not len(data):
+                    break
+                response = self.checkIfCarriageReturn(clientSock, data)
+                if response is None:
                     #Not a CR LF message, parse the selector
-                    else:
-                        selector = data.decode("ascii")
-                        if "\\r\\n" not in selector:
-                            response = "Error: not a valid selector string, include CR LF at the end."
-                            response = response.encode("ascii")
-                            clientSock.sendall(response)
-                            break
-
-                        #Remove the CR LF from the selector string, get the file type (if the client wants a file)
-                        selector = selector.replace("\\r\\n","")
-                        fileType = selector[len(selector) - 3:]
-
-                        try:
-                            #They're asking for a specific file
-                            if fileType in ["txt"]:
-                                with open(os.path.join("Content", selector)) as chosenFile:
-                                    response = chosenFile.read()
-
-                            #They're browsing a directory
-                            else:
-                                with open(os.path.join("Content", selector, "links.txt")) as links:
-                                    response = links.read()
-                        except:
-                            response = "Error: couldn't find that file or directory!"
-                    response = response + "\n."
-                    response = response.encode("ascii")
-                    clientSock.sendall(response)
-                    print ("Received message:  " + data.decode("ascii"))
-
-            except:
-                response = "Error: socket timed out. Did you send an empty message? Send CR LF ('\\r\\n') to list server contents."
+                    response = self.parseSelector(clientSock, data)
+                response = response + "\r\n."
                 response = response.encode("ascii")
                 clientSock.sendall(response)
+                print ("Received message:  " + data.decode("ascii"))
             clientSock.close()
+
+        except:
+            response = "Error: socket timed out."
+            response = response.encode("ascii")
+            clientSock.sendall(response)
+            clientSock.close()
+
 
 
 def main():

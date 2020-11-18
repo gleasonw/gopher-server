@@ -1,3 +1,3 @@
-0Select Animals	animals.txt	localhost	50000\r\n
-0Select Plants	plants.txt	localhost	50000\r\n
-0Select bees	bees.txt	localhost	50000\r\n
+0Select Animals	animals.txt	localhost	50000
+0Select Plants	plants.txt	localhost	50000
+0Select bees	bees.txt	localhost	50000
