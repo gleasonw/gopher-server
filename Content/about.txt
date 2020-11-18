@@ -1,0 +1,2 @@
+This is an example implementation of a Gopher Server, written by Will Gleason and Nicole Binder
+with start code from Amy Csizmar-Dalal
