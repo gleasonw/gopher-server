@@ -14,6 +14,11 @@ class TCPServer:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
+        
+    def sendFullStop(self, clientSock):
+        fullstop = ".\r\n"
+        fullstop = fullstop.encode("ascii")
+        clientSock.sendall(fullstop)
 
     def checkIfCarriageReturn(self, clientSock, data):
         #We get a CR LF message, list all we have
@@ -59,13 +64,15 @@ class TCPServer:
                 response = response + "\r\n."
                 response = response.encode("ascii")
                 clientSock.sendall(response)
-                print ("Received message:  " + data.decode("ascii"))
+                self.sendFullStop(clientSock)
+                print("Received message:  " + data.decode("ascii"))
             clientSock.close()
 
         except:
             response = "Error: socket timed out."
             response = response.encode("ascii")
             clientSock.sendall(response)
+            self.sendFullStop()
             clientSock.close()
 
 
