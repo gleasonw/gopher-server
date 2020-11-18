@@ -30,7 +30,6 @@ class TCPServer:
                 if data.decode("ascii") == "\\r\\n":
                     with open("Content/links.txt") as links:
                         response = links.read()
-                        response = response.encode("ascii")
 
                 #Not a CR LF message, parse the selector
                 else:

@@ -30,7 +30,7 @@ def main():
     print ("Sent message; waiting for reply")
 
     returned = serverSock.recv(1024)
-    print ("Received reply: "+ returned.decode("ascii"))
+    print ("Received reply: \n"+ returned.decode("ascii"))
 
     serverSock.close()
 
