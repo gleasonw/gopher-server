@@ -20,7 +20,9 @@ class TCPServer:
 
         while True:
             clientSock, clientAddr = self.sock.accept()
-            clientSock.settimeout(5)
+            clientSock.settimeout(3)
+
+            #Keeping these print statements in case they're handy for grading!
             print ("Connection received from ",  clientSock.getpeername())
             try:
                 while True:
@@ -41,6 +43,8 @@ class TCPServer:
                             response = response.encode("ascii")
                             clientSock.sendall(response)
                             break
+
+                        #Remove the CR LF from the selector string, get the file type (if the client wants a file)
                         selector = selector.replace("\\r\\n","")
                         fileType = selector[len(selector) - 3:]
 
